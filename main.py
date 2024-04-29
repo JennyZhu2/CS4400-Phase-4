@@ -21,13 +21,15 @@ connection.commit()
 
 # cursor.callproc('add_customer', ("Jenn482","Jenny","ZHU","Atlanta","2004-07-10","5","10"))
 # cursor.execute("DESCRIBE users")
-# cursor.execute("SELECT * FROM users")
+# cursor.callproc('remove_customer', ("vding123"))
+# cursor.execute("SELECT * FROM customers")
+
 
 # for x in cursor:
-#     print(x)
+#      print(x)
 
 @app.route('/customer', methods=['POST', 'GET'])
-def customer():
+def addCustomer():
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM customers")
     customer = cursor.fetchall()
@@ -40,6 +42,18 @@ def customer():
         rating = request.form['rating']
         credit = request.form['credit']
         cursor.callproc('add_customer', (uname, fname, lname, address, bdate, rating, credit))
+        connection.commit()
+    cursor.close()
+    return render_template('customer.html', customer=customer)
+
+@app.route('/remove_customer', methods=['POST', 'GET'])
+def removeCustomer():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM customers")
+    customer = cursor.fetchall()
+    if request.method == "POST":
+        uname = request.form['uname']
+        cursor.callproc('remove_customer', (uname,))
         connection.commit()
     cursor.close()
     return render_template('customer.html', customer=customer)
