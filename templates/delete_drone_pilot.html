@@ -12,7 +12,7 @@
     <form action="{{ url_for('delete_drone_pilot') }}" method="post">
         <div class="form-group">
             <label for="uname">Username</label>
-            <select name="uname" id="uname" class="form-control">
+            <select name="uname" id="uname" class="form-control" placeholder="agarcia3">
                 {% for pilot in drone_pilots %}
                 <option value="{{ pilot[0] }}">{{ pilot[0] }}</option>
                 {% endfor %}

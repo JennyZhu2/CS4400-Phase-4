@@ -2,103 +2,177 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drone Dispatch - Drone Pilots</title>
+
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <body>
-<div class="container-fluid">
-    <h1 class="text-center alert alert-primary">Drone Pilot List</h1>
-    <div class="row">
-        <div class="col-sm-2"></div>
-        <div class="col-sm-8">
-            <h2>Drone Pilots <button class="btn btn-primary float-right" data-toggle="modal" data-target="#addPilotModal">Add Drone Pilot</button></h2>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">Username</th>
-                        <th scope="col">License ID</th>
-                        <th scope="col">Experience</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in drone_pilots %}
-                    <tr>
-                        <td>{{ row[0] }}</td>
-                        <td>{{ row[1] }}</td>
-                        <td>{{ row[2] }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
 
-            <!-- Modal for Adding Drone Pilot -->
-            <div class="modal fade" id="addPilotModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modalLabel">Add New Drone Pilot</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+<div class="container-fluid" style="overflow-y:scroll;">
+<h1 class="text-center alert alert-danger">Drone Pilot List</h1>
+        <div class="row">
+            <div class="col-sm-2"></div>
+
+            <!-- content goes here -->
+            <div class="col-sm-8">
+<h2 >Drone Pilot List <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal1">Add Drone Pilot</button>
+    <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal2">Remove Drone Pilot</button></h2>
+
+
+{%with messages = get_flashed_messages()%}
+{%if messages%}
+{% for message in messages %}
+<div class="alert alert-success alert-dismissable" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    {{message}}
+</div>
+{%endfor%}
+{%endif%}
+{%endwith%}
+
+
+
+    <!-- Modal for Adding Drone Pilot -->
+    <div class="modal fade" id="myModal1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Add New Drone Pilot</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('drone_pilot')}}" method="POST">
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" class="form-control" name="uname" placeholder="awilson5" required>
                         </div>
-                        <div class="modal-body">
-                            <form action="{{ url_for('drone_pilot')}}" method="POST">
-                                <div class="form-group">
-                                    <label>Username</label>
-                                    <input type="text" class="form-control" name="uname" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>First Name</label>
-                                    <input type="text" class="form-control" name="first_name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Last Name</label>
-                                    <input type="text" class="form-control" name="last_name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Address</label>
-                                    <input type="text" class="form-control" name="address" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Birthdate</label>
-                                    <input type="text" name="birthdate" class="form-control" id="birthdateInput" placeholder="YYYY-MM-DD">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label>Tax ID</label>
-                                    <input type="text" class="form-control" name="taxID" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Service</label>
-                                    <input type="number" class="form-control" name="service" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Salary</label>
-                                    <input type="number" class="form-control" name="salary" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>License ID</label>
-                                    <input type="text" class="form-control" name="licenseID" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>Experience</label>
-                                    <input type="number" class="form-control" name="experience" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </form>
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" class="form-control" name="first_name" placeholder="Aaron" required>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" class="form-control" name="last_name" placeholder="Wilson" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <input type="text" class="form-control" name="address" placeholder="220 Peachtree Street" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Birthdate</label>
+                            <input type="text" name="birthdate" class="form-control" id="birthdateInput" placeholder="1963-11-11">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tax ID</label>
+                            <input type="text" class="form-control" name="taxID" placeholder="111-11-1111" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Service</label>
+                            <input type="number" class="form-control" name="service" placeholder="9" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Salary</label>
+                            <input type="number" class="form-control" name="salary" placeholder="46000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>License ID</label>
+                            <input type="text" class="form-control" name="licenseID" placeholder="314159" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Experience</label>
+                            <input type="number" class="form-control" name="experience" placeholder="41" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
                 </div>
             </div>
-            <!-- End of Modal -->
         </div>
-        <div class="col-sm-2"></div>
     </div>
-</div>
+    <!-- End of Modal -->
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Username</th>
+            <th scope="col">License ID</th>
+            <th scope="col">Experience</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in drone_pilots %}
+        <tr>
+        <td>{{row.0}}</td>
+        <td>{{row.1}}</td>
+        <td>{{row.2}}</td>
+        <td>
+        </td>
+    </tr>
+
+
+                 <!-- Enter New Student Modal -->
+     <div id="myModal2" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Drone Pilot to Remove</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+
+                <div class="modal-body">
+
+                    <form action="{{ url_for('delete_pilot') }}" method="post">
+                        <div class="form-group">
+                            <label for="uname">Username</label>
+                            <select name="uname" id="uname" class="form-control" placeholder="agarcia3">
+                                {% for pilot in drone_pilots %}
+                                <option value="{{ pilot[0] }}">{{ pilot[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                            <a href="{{ url_for('drone_pilot') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+        {% endfor %}
+    </tbody>
+    <div class="msg">{{ msg }}</div>
+</table>
+            </div>
+            <!-- Content ends here-->
+
+
+            <div class="col-sm-2"></div>
+
+        </div>
+    </div>
+
+ <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 </html>

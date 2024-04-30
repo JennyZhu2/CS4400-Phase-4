@@ -8,7 +8,6 @@ app.config['SECRET_KEY'] = 'akfbibibibfkwiw'
 connection = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
-    passwd="1236",
     database="drone_dispatch",
     port = 3306
 )
@@ -50,6 +49,8 @@ def addCustomer():
             # call mysql stored procedure and commit changes
             cursor.callproc('add_customer', (uname, fname, lname, address, bdate, rating, credit))
             connection.commit()
+            cursor.close()
+            return redirect('/customer')
         except Exception as e:
             flash(f'Cannot add customer: {e}')
     cursor.close()
@@ -66,6 +67,8 @@ def removeCustomer():
         try:
             cursor.callproc('remove_customer', [uname])
             connection.commit()
+            cursor.close()
+            return redirect('/customer')
         except Exception as e:
             flash(f'Cannot delete customer: {e}')
     cursor.close()
@@ -74,7 +77,7 @@ def removeCustomer():
 @app.route('/drone_pilot', methods=['POST', 'GET'])
 def drone_pilot():
     cursor = connection.cursor()
-    cursor.execute("SELECT uname, licenseID, experience FROM drone_pilots")
+    cursor.execute("SELECT * FROM drone_pilots")
     drone_pilots = cursor.fetchall()
     if request.method == "POST":
         uname = request.form['uname']
@@ -87,13 +90,22 @@ def drone_pilot():
         salary = request.form['salary']
         licenseID = request.form['licenseID']
         experience = request.form['experience']
-        cursor.callproc('add_drone_pilot', [uname, first_name, last_name, address, birthdate, taxID, service, salary, licenseID, experience])
-        connection.commit()
+        try:
+            # call mysql stored procedure and commit changes
+            cursor.callproc('add_drone_pilot',
+                            (uname, first_name, last_name, address, birthdate, taxID, service, salary, licenseID,
+                             experience))
+            connection.commit()
+            cursor.close()
+            return redirect('/drone_pilot')
+        except Exception as e:
+            flash(f'Cannot add drone pilot: {e}')
+
     cursor.close()
     return render_template('add_drone_pilot.html', drone_pilots=drone_pilots)
 
-@app.route('/delete_drone_pilot', methods=['GET', 'POST'])
-def delete_drone_pilot():
+@app.route('/delete_pilot', methods=['GET', 'POST'])
+def delete_pilot():
     cursor = connection.cursor()
     cursor.execute("SELECT uname FROM drone_pilots")
     drone_pilots = cursor.fetchall()
@@ -106,14 +118,14 @@ def delete_drone_pilot():
             flash(f'An error occurred: {e}')
         finally:
             cursor.close()
-        return redirect(url_for('delete_drone_pilot'))  # Stay on the same page after removing
+        return redirect('/drone_pilot')  # Stay on the same page after removing
     cursor.close()
-    return render_template('delete_drone_pilot.html', drone_pilots=drone_pilots)
+    return render_template('drone_pilot.html', drone_pilots=drone_pilots)
 
 @app.route('/view')
 def view():
     return 'Views will be displayed here'
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
     
