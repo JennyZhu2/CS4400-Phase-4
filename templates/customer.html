@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drone Dispatch</title>
+    <title>Drone Dispatch - Customers</title>
 
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -12,14 +12,15 @@
 <body>
     
 <div class="container-fluid" style="overflow-y:scroll;">
-<h1 class="text-center alert alert-danger">Drone Dispatch</h1>
+<h1 class="text-center alert alert-danger">Customer List</h1>
         <div class="row">
             <div class="col-sm-2"></div>
 
             <!-- content goes here -->
             <div class="col-sm-8">
 <h2 >Customer List <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal1">Add Customer</button> 
-    <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal2">Remove Customer</button></h2>
+    <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal2">Remove Customer</button>
+<button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal3">Increase Credits</button></h2>
 
 
 {%with messages = get_flashed_messages()%}
@@ -55,37 +56,37 @@
                     <form action="{{ url_for('addCustomer')}}" method="POST">
                         <div class="form-group">
                           <label>Username</label>
-                          <input type="text" name="uname" class="form-control" id="exampleFormControlInput1" placeholder="agarcia3">
+                          <input type="text" name="uname" class="form-control" id="uname" placeholder="agarcia3">
                         </div>
 
                         <div class="form-group">
                             <label>First Name</label>
-                            <input type="text" name="fname" class="form-control" id="exampleFormControlInput1" placeholder="ally">
+                            <input type="text" name="fname" class="form-control" id="fname" placeholder="ally">
                         </div>
 
                         <div class="form-group">
                             <label>Last Name</label>
-                            <input type="text" name="lname" class="form-control" id="exampleFormControlInput1" placeholder="garcia">
+                            <input type="text" name="lname" class="form-control" id="lname" placeholder="garcia">
                         </div>
 
                         <div class="form-group">
                             <label>Address</label>
-                            <input type="text" name="address" class="form-control" id="exampleFormControlInput1" placeholder="Peachtree St">
+                            <input type="text" name="address" class="form-control" id="address" placeholder="Peachtree St">
                         </div>
 
                         <div class="form-group">
                             <label>Birthdate</label>
-                            <input type="text" name="bdate" class="form-control" id="exampleFormControlInput1" placeholder="1978-07-09">
+                            <input type="text" name="bdate" class="form-control" id="bdate" placeholder="1978-07-09">
                         </div>
 
                         <div class="form-group">
                             <label>Rating</label>
-                            <input type="text" name="rating" class="form-control" id="exampleFormControlInput1" placeholder="5">
+                            <input type="text" name="rating" class="form-control" id="rating" placeholder="5">
                         </div>
 
                         <div class="form-group">
                             <label>Credit</label>
-                            <input type="text" name="credit" class="form-control" id="exampleFormControlInput1" placeholder="100">
+                            <input type="text" name="credit" class="form-control" id="credit" placeholder="100">
                           </div>
 
                           <button type="submit" class="btn btn-primary mb-2">Save</button>
@@ -107,9 +108,9 @@
 <table class="table table-hover">
     <thead>
         <tr>
-            <th scope="col">uname</th>
-            <th scope="col">rating</th>
-            <th scope="col">credit</th>
+            <th scope="col">Username</th>
+            <th scope="col">Rating</th>
+            <th scope="col">Credit</th>
         </tr>
     </thead>
     <tbody>
@@ -141,8 +142,15 @@
                     <form action="{{ url_for('removeCustomer')}}" method="POST">
                         <div class="form-group">
                           <label>Username</label>
-                          <input type="text" name="uname" class="form-control" id="exampleFormControlInput1" placeholder="agarcia3">
-                          <button type="submit" class="btn btn-primary mb-2">Save</button>
+                            <select name="uname" id="uname_rm" class="form-control" placeholder="agarcia3">
+                                {% for c in customer %}
+                                <option value="{{ c[0] }}">{{ c[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                            <a href="{{ url_for('addCustomer') }}" class="btn btn-secondary">Cancel</a>
                         </div>
 
                       </form>
@@ -156,6 +164,46 @@
 
 
     <!-- End of Edit Student Modal -->
+
+         <!-- Enter New Student Modal -->
+     <div id="myModal3" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Increase Credits</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+
+                <div class="modal-body">
+
+                    <form action="{{ url_for('customerCredits')}}" method="POST">
+                        <div class="form-group">
+                          <label>Username</label>
+                            <select name="uname" id="uname_c" class="form-control" placeholder="agarcia3">
+                                {% for c in customer %}
+                                <option value="{{ c[0] }}">{{ c[0] }}</option>
+                                {% endfor %}
+                            </select>
+                          <label>Money</label>
+                          <input type="text" name="money" class="form-control" id="money" placeholder="100">
+                            </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <a href="{{ url_for('addCustomer') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+
+                      </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
 
         {% endfor %}
     </tbody>
