@@ -11,14 +11,16 @@
 </head>
 <body>
     
-<div class="container-fluid">
+<div class="container-fluid" style="overflow-y:scroll;">
 <h1 class="text-center alert alert-danger">Drone Dispatch</h1>
         <div class="row">
             <div class="col-sm-2"></div>
 
             <!-- content goes here -->
             <div class="col-sm-8">
-<h2 >Customer List <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal">Add Customer</button></h2>
+<h2 >Customer List <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal1">Add Customer</button> 
+    <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal2">Remove Customer</button></h2>
+
 
 {%with messages = get_flashed_messages()%}
 {%if messages%}
@@ -35,13 +37,13 @@
 
 
 
-    <!-- Enter New Student Modal -->
-    <div id="myModal" class="modal fade" role="dialog">
+    <!-- Enter New Customer Modal -->
+    <div id="myModal1" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
    
                 <div class="modal-header">
-                    <h5 class="modal-title text-primary" style="align-content: center;">Please Add New Student</h5>    
+                    <h5 class="modal-title text-primary" style="align-content: center;">Please Add New Customer</h5>    
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -50,7 +52,7 @@
 
                 <div class="modal-body">
                     
-                    <form action="{{ url_for('customer')}}" method="POST">
+                    <form action="{{ url_for('addCustomer')}}" method="POST">
                         <div class="form-group">
                           <label>Username</label>
                           <input type="text" name="uname" class="form-control" id="exampleFormControlInput1" placeholder="agarcia3">
@@ -98,8 +100,7 @@
     </div>
 
 
-    <!-- End of Enter New Customer Modal -->
-
+    <!-- End of Remove Customer Modal -->
 
 
 
@@ -122,11 +123,43 @@
     </tr>
 
 
+     <!-- Enter New Student Modal -->
+     <div id="myModal2" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+   
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Customer to Remove</h5>    
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  
 
+                <div class="modal-body">
+                    
+                    <form action="{{ url_for('removeCustomer')}}" method="POST">
+                        <div class="form-group">
+                          <label>Username</label>
+                          <input type="text" name="uname" class="form-control" id="exampleFormControlInput1" placeholder="agarcia3">
+                          <button type="submit" class="btn btn-primary mb-2">Save</button>
+                        </div>
+
+                      </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- End of Edit Student Modal -->
 
         {% endfor %}
     </tbody>
-
+    <div class="msg">{{ msg }}</div>
 </table>
             </div>
             <!-- Content ends here-->
