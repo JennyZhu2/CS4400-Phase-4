@@ -19,7 +19,8 @@
             <!-- content goes here -->
             <div class="col-sm-8">
 <h2 >Customer List <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal1">Add Customer</button> 
-    <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal2">Remove Customer</button></h2>
+    <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal2">Remove Customer</button>
+<button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal3">Increase Credits</button></h2>
 
 
 {%with messages = get_flashed_messages()%}
@@ -146,8 +147,10 @@
                                 <option value="{{ c[0] }}">{{ c[0] }}</option>
                                 {% endfor %}
                             </select>
-<!--                          <input type="text" name="uname" class="form-control" id="exampleFormControlInput1" placeholder="agarcia3">-->
-                          <button type="submit" class="btn btn-primary mb-2">Save</button>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                            <a href="{{ url_for('addCustomer') }}" class="btn btn-secondary">Cancel</a>
                         </div>
 
                       </form>
@@ -161,6 +164,46 @@
 
 
     <!-- End of Edit Student Modal -->
+
+         <!-- Enter New Student Modal -->
+     <div id="myModal3" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Increase Credits</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+
+                <div class="modal-body">
+
+                    <form action="{{ url_for('customerCredits')}}" method="POST">
+                        <div class="form-group">
+                          <label>Username</label>
+                            <select name="uname" id="uname_c" class="form-control" placeholder="agarcia3">
+                                {% for c in customer %}
+                                <option value="{{ c[0] }}">{{ c[0] }}</option>
+                                {% endfor %}
+                            </select>
+                          <label>Money</label>
+                          <input type="text" name="money" class="form-control" id="money" placeholder="100">
+                            </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <a href="{{ url_for('addCustomer') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+
+                      </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
 
         {% endfor %}
     </tbody>

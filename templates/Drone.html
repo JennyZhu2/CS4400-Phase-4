@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Dispatch - Drones</title>
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container-fluid" style="overflow-y:scroll;">
+<h1 class="text-center alert alert-danger">Drone List</h1>
+        <div class="row">
+            <div class="col-sm-2"></div>
+
+            <!-- content goes here -->
+            <div class="col-sm-8">
+<h2 >Drone List <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal1">Add Drone</button>
+    <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal2">Remove Drone</button>
+<button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal3">Refuel Drone</button>
+<button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal4">Swap Pilots</button></h2>
+
+
+{%with messages = get_flashed_messages()%}
+{%if messages%}
+{% for message in messages %}
+<div class="alert alert-success alert-dismissable" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    {{message}}
+</div>
+{%endfor%}
+{%endif%}
+{%endwith%}
+
+
+
+    <!-- Enter New Customer Modal -->
+    <div id="myModal1" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Please Add New Drone</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+
+                <div class="modal-body">
+
+                    <form action="{{ url_for('addDrone')}}" method="POST">
+                        <div class="form-group">
+                          <label>Store ID</label>
+                            <select name="storeid" id="storeid" class="form-control" placeholder="pub">
+                                {% for s in ["krg", "pub"] %}
+                                <option value="{{ s }}">{{ s }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Drone Tag</label>
+                            <input type="text" name="dronetag" class="form-control" id="dronetag" placeholder="1">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Capacity</label>
+                            <input type="text" name="capacity" class="form-control" id="capacity" placeholder="10">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Drone Pilot</label>
+                            <input type="text" name="pilot" class="form-control" id="pilot" placeholder="awilson5">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Remaining Trips</label>
+                            <input type="text" name="remtrips" class="form-control" id="remtrips" placeholder="3">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mb-2">Save</button>
+
+                      </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- End of Remove Customer Modal -->
+
+
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Store ID</th>
+            <th scope="col">Drone Tag</th>
+            <th scope="col">Capacity</th>
+            <th scope="col">Trips Remaining</th>
+            <th scope="col">Pilot</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in drone %}
+        <tr>
+        <td>{{row.0}}</td>
+        <td>{{row.1}}</td>
+        <td>{{row.2}}</td>
+        <td>{{row.3}}</td>
+        <td>{{row.4}}</td>
+        <td>
+        </td>
+    </tr>
+
+
+     <!-- Enter New Student Modal -->
+     <div id="myModal2" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Drone to Remove</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+
+                <div class="modal-body">
+
+                    <form action="{{ url_for('removeDrone')}}" method="POST">
+                        <div class="form-group">
+                          <label>Store ID</label>
+                            <select name="storeid" id="storeid_rm" class="form-control" placeholder="pub">
+                                {% for p in ["krg", "pub"] %}
+                                <option value="{{ p }}">{{ p }}</option>
+                                {% endfor %}
+                            </select>
+                            <label>Drone Tag</label>
+                            <input type="text" name="dronetag" class="form-control" id="dronetag_rm" placeholder="1">
+<!--                          <input type="text" name="uname" class="form-control" id="exampleFormControlInput1" placeholder="agarcia3">-->
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                            <a href="{{ url_for('addDrone') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+
+                      </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+         <!-- Enter New Student Modal -->
+     <div id="myModal3" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Refuel Drone</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+
+                <div class="modal-body">
+
+                    <form action="{{ url_for('refuelDrone')}}" method="POST">
+                        <div class="form-group">
+                          <label>Store ID</label>
+                            <select name="storeid" id="storeid_rf" class="form-control" placeholder="pub">
+                                {% for p in ["krg", "pub"] %}
+                                <option value="{{ p }}">{{ p }}</option>
+                                {% endfor %}
+                            </select>
+                            <label>Drone Tag</label>
+                            <input type="text" name="dronetag" class="form-control" id="dronetag_rf" placeholder="2">
+                            <label>Refueled Trips</label>
+                            <input type="text" name="refueledtrips" class="form-control" id="rftrips" placeholder="3">
+<!--                          <input type="text" name="uname" class="form-control" id="exampleFormControlInput1" placeholder="agarcia3">-->
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Refuel</button>
+                            <a href="{{ url_for('addDrone') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+
+                      </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- End of Edit Student Modal -->
+
+         <!-- Enter New Student Modal -->
+     <div id="myModal4" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Swap Pilots</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+
+                <div class="modal-body">
+
+                    <form action="{{ url_for('swapDrone')}}" method="POST">
+                        <div class="form-group">
+                          <label>Incoming</label>
+                            <select name="incoming" id="incoming" class="form-control" placeholder="agarcia3">
+                                {% for pilot in drone_pilots %}
+                                <option value="{{ pilot[0] }}">{{ pilot[0] }}</option>
+                                {% endfor %}
+                            </select>
+                            <label>Outgoing</label>
+                            <select name="outgoing" id="outgoing" class="form-control" placeholder="agarcia3">
+                                {% for d in drone %}
+                                <option value="{{ d[4] }}">{{ d[4] }}</option>
+                                {% endfor %}
+                            </select>
+<!--                          <input type="text" name="uname" class="form-control" id="exampleFormControlInput1" placeholder="agarcia3">-->
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Swap</button>
+                            <a href="{{ url_for('addDrone') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+
+                      </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+        {% endfor %}
+    </tbody>
+    <div class="msg">{{ msg }}</div>
+</table>
+            </div>
+            <!-- Content ends here-->
+
+
+            <div class="col-sm-2"></div>
+
+        </div>
+    </div>
+
+ <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>

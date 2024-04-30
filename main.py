@@ -27,9 +27,9 @@ connection.commit()
 # for x in cursor:
 #      print(x)
 
-@app.route('/', methods=['POST', 'GET'])
-def home():
-    return redirect(url_for('customer')) 
+# @app.route('/', methods=['POST', 'GET'])
+# def home():
+#     return redirect(url_for('customer'))
 
 @app.route('/customer', methods=['POST', 'GET'])
 def addCustomer():
@@ -66,6 +66,24 @@ def removeCustomer():
         uname = request.form['uname']
         try:
             cursor.callproc('remove_customer', [uname])
+            connection.commit()
+            cursor.close()
+            return redirect('/customer')
+        except Exception as e:
+            flash(f'Cannot delete customer: {e}')
+    cursor.close()
+    return render_template('customer.html', customer=customer)
+
+@app.route('/customer_credits', methods=['POST', 'GET'])
+def customerCredits():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM customers")
+    customer = cursor.fetchall()
+    if request.method == "POST":
+        uname = request.form['uname']
+        money = request.form['money']
+        try:
+            cursor.callproc('increase_customer_credits', [uname, money])
             connection.commit()
             cursor.close()
             return redirect('/customer')
@@ -122,9 +140,144 @@ def delete_pilot():
     cursor.close()
     return render_template('drone_pilot.html', drone_pilots=drone_pilots)
 
+@app.route('/product', methods=['POST', 'GET'])
+def addProduct():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM products")
+    product = cursor.fetchall()
+    if request.method == "POST":
+        # fetch data from form inputs
+        barcode = request.form['barcode']
+        pname = request.form['pname']
+        weight = request.form['weight']
+        try:
+            # call mysql stored procedure and commit changes
+            cursor.callproc('add_product', (barcode, pname, weight))
+            connection.commit()
+            cursor.close()
+            return redirect('/product')
+        except Exception as e:
+            flash(f'Cannot add product: {e}')
+    cursor.close()
+    # populate webpage with queried entries
+    return render_template('product.html', product=product)
+
+@app.route('/remove_product', methods=['POST', 'GET'])
+def removeProduct():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM products")
+    product = cursor.fetchall()
+    if request.method == "POST":
+        barcode = request.form['barcode']
+        try:
+            cursor.callproc('remove_product', [barcode])
+            connection.commit()
+            cursor.close()
+            return redirect('/product')
+        except Exception as e:
+            flash(f'Cannot delete product: {e}')
+    cursor.close()
+    return render_template('product.html', product=product)
+
+@app.route('/drone', methods=['POST', 'GET'])
+def addDrone():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM drones")
+    drone = cursor.fetchall()
+    cursor.execute("SELECT * FROM drone_pilots")
+    drone_pilots = cursor.fetchall()
+    if request.method == "POST":
+        # fetch data from form inputs
+        storeid = request.form['storeid']
+        dronetag = request.form['dronetag']
+        capacity = request.form['capacity']
+        pilot = request.form['pilot']
+        remtrips = request.form['remtrips']
+        try:
+            # call mysql stored procedure and commit changes
+            cursor.callproc('add_drone', (storeid, dronetag, capacity, remtrips, pilot))
+            connection.commit()
+            cursor.close()
+            return redirect('/drone')
+        except Exception as e:
+            flash(f'Cannot add drone: {e}')
+    cursor.close()
+    # populate webpage with queried entries
+    return render_template('drone.html', drone=drone, drone_pilots=drone_pilots)
+
+@app.route('/remove_drone', methods=['POST', 'GET'])
+def removeDrone():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM drones")
+    drone = cursor.fetchall()
+    cursor.execute("SELECT * FROM drone_pilots")
+    drone_pilots = cursor.fetchall()
+    if request.method == "POST":
+        storeid = request.form['storeid']
+        dronetag = request.form['dronetag']
+        try:
+            cursor.callproc('remove_drone', [storeid, dronetag])
+            connection.commit()
+            cursor.close()
+            return redirect('/drone')
+        except Exception as e:
+            flash(f'Cannot delete drone: {e}')
+    cursor.close()
+    return render_template('drone.html', drone=drone, drone_pilots=drone_pilots)
+
+@app.route('/refuel_drone', methods=['POST', 'GET'])
+def refuelDrone():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM drones")
+    drone = cursor.fetchall()
+    cursor.execute("SELECT * FROM drone_pilots")
+    drone_pilots = cursor.fetchall()
+    if request.method == "POST":
+        storeid = request.form['storeid']
+        dronetag = request.form['dronetag']
+        refueledtrips = request.form['refueledtrips']
+        try:
+            cursor.callproc('repair_refuel_drone', [storeid, dronetag, refueledtrips])
+            connection.commit()
+            cursor.close()
+            return redirect('/drone')
+        except Exception as e:
+            flash(f'Cannot refuel drone: {e}')
+    cursor.close()
+    return render_template('drone.html', drone=drone, drone_pilots=drone_pilots)
+
+@app.route('/swap_drone', methods=['POST', 'GET'])
+def swapDrone():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM drones")
+    drone = cursor.fetchall()
+    cursor.execute("SELECT * FROM drone_pilots")
+    drone_pilots = cursor.fetchall()
+    print(drone_pilots)
+    if request.method == "POST":
+        incoming = request.form['incoming']
+        outgoing = request.form['outgoing']
+        try:
+            cursor.callproc('swap_drone_control', [incoming, outgoing])
+            connection.commit()
+            cursor.close()
+            return redirect('/drone')
+        except Exception as e:
+            flash(f'Cannot swap: {e}')
+    cursor.close()
+    return render_template('drone.html', drone=drone, drone_pilots=drone_pilots)
+
 @app.route('/view')
 def view():
     return 'Views will be displayed here'
+
+@app.route('/order')
+def order():
+    return 'Orders will be displayed here'
+
+@app.route('/')
+def main():
+    return render_template("index.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
