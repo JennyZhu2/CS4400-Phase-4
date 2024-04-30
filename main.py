@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 import mysql.connector
 
 app = Flask(__name__)
@@ -8,7 +8,7 @@ app.config['SECRET_KEY'] = 'akfbibibibfkwiw'
 connection = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
-    passwd="INSERT_YOUR_PASSWORD",
+    passwd="Ameya2002",
     database="drone_dispatch",
     port = 3306
 )
@@ -69,7 +69,25 @@ def drone_pilot():
     cursor.close()
     return render_template('add_drone_pilot.html', drone_pilots=drone_pilots)
 
+@app.route('/delete_drone_pilot', methods=['GET', 'POST'])
+def delete_drone_pilot():
+    cursor = connection.cursor()
+    cursor.execute("SELECT uname FROM drone_pilots")
+    drone_pilots = cursor.fetchall()
 
+    if request.method == 'POST':
+        uname = request.form.get('uname')
+        try:
+            cursor.callproc('remove_drone_pilot', [uname])
+            connection.commit()
+        except Exception as e:
+            flash(f'An error occurred: {e}')
+        finally:
+            cursor.close()
+        return redirect(url_for('delete_drone_pilot'))  # Stay on the same page after removing
+
+    cursor.close()
+    return render_template('delete_drone_pilot.html', drone_pilots=drone_pilots)
 @app.route('/view')
 def view():
     return 'Views will be displayed here'
