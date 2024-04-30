@@ -8,7 +8,7 @@ app.config['SECRET_KEY'] = 'akfbibibibfkwiw'
 connection = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
-    passwd="1236",
+    passwd="INSERT_YOUR_PASSWORD",
     database="drone_dispatch",
     port = 3306
 )
@@ -28,6 +28,10 @@ connection.commit()
 # for x in cursor:
 #      print(x)
 
+@app.route('/')
+def home():
+    return redirect(url_for('customer')) 
+
 @app.route('/customer', methods=['POST', 'GET'])
 def addCustomer():
     cursor = connection.cursor()
@@ -45,6 +49,28 @@ def addCustomer():
         connection.commit()
     cursor.close()
     return render_template('customer.html', customer=customer)
+    
+@app.route('/drone_pilot', methods=['POST', 'GET'])
+def drone_pilot():
+    cursor = connection.cursor()
+    cursor.execute("SELECT uname, licenseID, experience FROM drone_pilots")
+    drone_pilots = cursor.fetchall()
+    if request.method == "POST":
+        uname = request.form['uname']
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        address = request.form['address']
+        birthdate = request.form['birthdate']
+        taxID = request.form['taxID']
+        service = request.form['service']
+        salary = request.form['salary']
+        licenseID = request.form['licenseID']
+        experience = request.form['experience']
+        cursor.callproc('add_drone_pilot', [uname, first_name, last_name, address, birthdate, taxID, service, salary, licenseID, experience])
+        connection.commit()
+    cursor.close()
+    return render_template('add_drone_pilot.html', drone_pilots=drone_pilots)
+
 
 @app.route('/remove_customer', methods=['POST', 'GET'])
 def removeCustomer():
