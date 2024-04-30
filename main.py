@@ -8,7 +8,7 @@ app.config['SECRET_KEY'] = 'akfbibibibfkwiw'
 connection = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
-    passwd="YOUR_PASSWORD_HERE",
+    passwd="1236",
     database="drone_dispatch",
     port = 3306
 )
