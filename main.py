@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 import mysql.connector
 
 app = Flask(__name__)
@@ -8,7 +8,7 @@ app.config['SECRET_KEY'] = 'akfbibibibfkwiw'
 connection = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
-    passwd="INSERT_YOUR_PASSWORD",
+    passwd="YOUR_PASSWORD_HERE",
     database="drone_dispatch",
     port = 3306
 )
@@ -28,7 +28,7 @@ connection.commit()
 # for x in cursor:
 #      print(x)
 
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def home():
     return redirect(url_for('customer')) 
 
@@ -38,6 +38,7 @@ def addCustomer():
     cursor.execute("SELECT * FROM customers")
     customer = cursor.fetchall()
     if request.method == "POST":
+        # fetch data from form inputs
         uname = request.form['uname']
         fname = request.form['fname']
         lname = request.form['lname']
@@ -45,8 +46,28 @@ def addCustomer():
         bdate = request.form['bdate']
         rating = request.form['rating']
         credit = request.form['credit']
-        cursor.callproc('add_customer', (uname, fname, lname, address, bdate, rating, credit))
-        connection.commit()
+        try:
+            # call mysql stored procedure and commit changes
+            cursor.callproc('add_customer', (uname, fname, lname, address, bdate, rating, credit))
+            connection.commit()
+        except Exception as e:
+            flash(f'Cannot add customer: {e}')
+    cursor.close()
+    # populate webpage with queried entries
+    return render_template('customer.html', customer=customer)
+
+@app.route('/remove_customer', methods=['POST', 'GET'])
+def removeCustomer():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM customers")
+    customer = cursor.fetchall()
+    if request.method == "POST":
+        uname = request.form['uname']
+        try:
+            cursor.callproc('remove_customer', [uname])
+            connection.commit()
+        except Exception as e:
+            flash(f'Cannot delete customer: {e}')
     cursor.close()
     return render_template('customer.html', customer=customer)
     
@@ -71,18 +92,23 @@ def drone_pilot():
     cursor.close()
     return render_template('add_drone_pilot.html', drone_pilots=drone_pilots)
 
-
-@app.route('/remove_customer', methods=['POST', 'GET'])
-def removeCustomer():
+@app.route('/delete_drone_pilot', methods=['GET', 'POST'])
+def delete_drone_pilot():
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM customers")
-    customer = cursor.fetchall()
-    if request.method == "POST":
-        uname = request.form['uname']
-        cursor.callproc('remove_customer', (uname,))
-        connection.commit()
+    cursor.execute("SELECT uname FROM drone_pilots")
+    drone_pilots = cursor.fetchall()
+    if request.method == 'POST':
+        uname = request.form.get('uname')
+        try:
+            cursor.callproc('remove_drone_pilot', [uname])
+            connection.commit()
+        except Exception as e:
+            flash(f'An error occurred: {e}')
+        finally:
+            cursor.close()
+        return redirect(url_for('delete_drone_pilot'))  # Stay on the same page after removing
     cursor.close()
-    return render_template('customer.html', customer=customer)
+    return render_template('delete_drone_pilot.html', drone_pilots=drone_pilots)
 
 @app.route('/view')
 def view():
