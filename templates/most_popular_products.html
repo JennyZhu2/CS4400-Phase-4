@@ -1,0 +1,31 @@
+<h1> {{name}}</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th> barcode</th>
+            <th> product_name </th>
+            <th> weight </th>
+            <th> lowest_price </th>
+            <th> highest_price </th>
+            <th> lowest_quantity </th>
+            <th> highest_quantity </th> 
+            <th> total_quantity </th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for row in data%}
+        <tr>
+            <td>{{row[0]}}</td>
+            <td>{{row[1]}}</td>
+            <td>{{row[2]}}</td>
+            <td>{{row[3]}}</td>
+            <td>{{row[4]}}</td>
+            <td>{{row[5]}}</td>
+            <td>{{row[6]}}</td>
+            <td> {{row[7]}}</td>
+
+        </tr>
+        {%endfor%}
+    </tbody>
+</table>

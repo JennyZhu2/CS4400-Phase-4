@@ -271,6 +271,50 @@ def swapDrone():
 def view():
     return 'Views will be displayed here'
 
+@app.route("/customer_credit_check")
+def customer_credit_check():
+    cursor.execute("select uname, rating, credit,ifnull(sum(price * quantity),0) from customers left join orders on purchased_by=uname left join order_lines on orders.orderID=order_lines.orderID group by uname;")
+    value = cursor.fetchall()
+    return render_template("customer_credit_check.html", data = value, name = 'customer_credit_check')
+
+
+@app.route("/role_distribution")
+def role_distribution():
+    cursor.execute("select 'users', count(*) from users union select 'customers', count(*) from customers union select 'employees', count(*) from employees union select 'customer_employer_overlap', count(*) from customers natural join employees union select 'drone_pilots', count(*) from drone_pilots union select 'store_workers', count(*) from store_workers union select 'other_employee_roles', count(*) from employees where uname not in (select uname from drone_pilots) and uname not in (select uname from store_workers);")
+    value = cursor.fetchall()
+    return render_template("role_distribution.html", data = value, name = 'role_distribution')
+
+@app.route("/drone_traffic_control")
+def drone_traffic_control(): 
+    cursor.execute("select storeID,droneTag,pilot,capacity,ifnull(sum(weight * quantity),0),remaining_trips,count(distinct orders.orderID) from drones left join orders on droneTag=carrier_tag and storeID=carrier_store left join order_lines on orders.orderID=order_lines.orderID left join products on order_lines.barcode=products.barcode group by storeID,droneTag;") 
+    value = cursor.fetchall() 
+    return render_template("drone_traffic_control.html", data = value, name = 'drone_traffic_control')
+
+@app.route("/most_popular_products")
+def most_popular_products():
+    cursor.execute("select products.barcode, pname, weight, min(price), max(price), ifnull(min(quantity),0), ifnull(max(quantity),0), ifnull(sum(quantity),0) from products left join order_lines on products.barcode=order_lines.barcode group by products.barcode;")
+    value = cursor.fetchall()
+    return render_template("most_popular_products.html", data = value, name = 'most_popular_products')
+
+@app.route("/drone_pilot_roster")
+def drone_pilot_roster():
+    cursor.execute("select uname, licenseID, storeID, droneTag, experience, count(orderID) from drone_pilots left join drones on uname=pilot left join orders on droneTag=carrier_tag and storeID=carrier_store group by uname,storeID,droneTag;")
+    value = cursor.fetchall()
+    return render_template("drone_pilot_roster.html", data = value, name = 'drone_pilot_roster')
+
+@app.route("/store_sales_overview")
+def store_sales_overview():
+    cursor.execute("select storeID, sname, manager, revenue, ifnull(sum(price * quantity),0), ifnull(count(distinct orders.orderID), 0) from stores left join orders on storeID=carrier_store left join order_lines on orders.orderID=order_lines.orderID group by storeID;")
+    value = cursor.fetchall()
+    return render_template("store_sales_overview.html", data = value, name = 'store_sales_overview')
+
+
+@app.route("/orders_in_progress")
+def orders_in_progress():
+    cursor.execute("select orders.orderID,ifnull(sum(price * quantity),0),ifnull(count(barcode),0),ifnull(sum(weight * quantity),0),group_concat(pname) from orders left join order_lines on orders.orderID=order_lines.orderID natural join products group by order_lines.orderID;")
+    value = cursor.fetchall()
+    return render_template("orders_in_progress.html", data = value, name = 'orders_in_progress')
+
 @app.route('/order')
 def order():
     return 'Orders will be displayed here'
