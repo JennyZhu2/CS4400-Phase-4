@@ -148,7 +148,11 @@
 
                         <div class="form-group">
                             <label>Product Barcode</label>
-                            <input type="text" name="barcode" class="form-control" id="barcode_a" placeholder="ap_9T25E36L">
+                            <select name="barcode" id="barcode_a" class="form-control" placeholder="ap_9T25E36L">
+                                {% for p in product %}
+                                <option value="{{ p[0] }}">{{ p[0] }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
 
                         <div class="form-group">
@@ -221,7 +225,11 @@
 
                         <div class="form-group">
                             <label>Product Barcode</label>
-                            <input type="text" name="barcode" class="form-control" id="barcode" placeholder="ap_9T25E36L">
+                            <select name="barcode" id="barcode" class="form-control" placeholder="ap_9T25E36L">
+                                {% for p in product %}
+                                <option value="{{ p[0] }}">{{ p[0] }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
 
                         <div class="form-group">
@@ -270,8 +278,6 @@
         <td>{{row.2}}</td>
         <td>{{row.3}}</td>
         <td>{{row.4}}</td>
-        <td>
-        </td>
     </tr>
 
 
@@ -300,8 +306,6 @@
         <td>{{row.1}}</td>
         <td>{{row.2}}</td>
         <td>{{row.3}}</td>
-        <td>
-        </td>
     </tr>
             {% endfor %}
     </tbody>
