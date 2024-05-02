@@ -271,10 +271,11 @@ def swapDrone():
 @app.route('/order', methods=['POST', 'GET'])
 def beginOrder():
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM orders")
-    order = cursor.fetchall()
     cursor.execute("SELECT * FROM order_lines")
     order_line = cursor.fetchall()
+    cursor.execute("SELECT * FROM orders")
+    order = cursor.fetchall()
+
     if request.method == "POST":
         # fetch data from form inputs
         orderid = request.form['orderid']
@@ -325,10 +326,11 @@ def addOrderLine():
 @app.route('/order', methods=['POST', 'GET'])
 def deliverOrder():
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM orders")
-    order = cursor.fetchall()
     cursor.execute("SELECT * FROM order_lines")
     order_line = cursor.fetchall()
+    cursor.execute("SELECT * FROM orders")
+    order = cursor.fetchall()
+
     if request.method == "POST":
         # fetch data from form inputs
         orderid = request.form['orderid']
@@ -347,10 +349,10 @@ def deliverOrder():
 @app.route('/order', methods=['POST', 'GET'])
 def cancelOrder():
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM orders")
-    order = cursor.fetchall()
     cursor.execute("SELECT * FROM order_lines")
     order_line = cursor.fetchall()
+    cursor.execute("SELECT * FROM orders")
+    order = cursor.fetchall()
     if request.method == "POST":
         # fetch data from form inputs
         orderid = request.form['orderid']

@@ -116,30 +116,6 @@
     <!-- End of Remove Customer Modal -->
 
 
-
-<table class="table table-hover">
-    <thead class="thead-dark">
-        <tr>
-            <th scope="col">Order ID</th>
-            <th scope="col">Sold On</th>
-            <th scope="col">Purchased By</th>
-            <th scope="col">Carrier Store</th>
-            <th scope="col">Carrier Tag</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for row in order %}
-        <tr>
-        <td>{{row.0}}</td>
-        <td>{{row.1}}</td>
-        <td>{{row.2}}</td>
-        <td>{{row.3}}</td>
-        <td>{{row.4}}</td>
-        <td>
-        </td>
-    </tr>
-
-
      <!-- Enter New Student Modal -->
      <div id="myModal2" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -272,6 +248,32 @@
         </div>
 
     </div>
+
+
+
+<table class="table table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Order ID</th>
+            <th scope="col">Sold On</th>
+            <th scope="col">Purchased By</th>
+            <th scope="col">Carrier Store</th>
+            <th scope="col">Carrier Tag</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in order %}
+        <tr>
+        <td>{{row.0}}</td>
+        <td>{{row.1}}</td>
+        <td>{{row.2}}</td>
+        <td>{{row.3}}</td>
+        <td>{{row.4}}</td>
+        <td>
+        </td>
+    </tr>
+
+
 
 
         {% endfor %}
