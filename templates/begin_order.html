@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Begin Order</title>
+</head>
+<body>
+    <h1>Start a New Order</h1>
+    <form action="{{ url_for('begin_order') }}" method="post">
+        Order ID: <input type="text" name="order_id"><br>
+        Sold On (YYYY-MM-DD): <input type="text" name="sold_on"><br>
+        Purchased By: <input type="text" name="purchased_by"><br>
+        Carrier Store: <input type="text" name="carrier_store"><br>
+        Carrier Tag: <input type="number" name="carrier_tag"><br>
+        Barcode: <input type="text" name="barcode"><br>
+        Price: <input type="number" name="price"><br>
+        Quantity: <input type="number" name="quantity"><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
