@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Views</title>
+    <style>
+        .padded {
+            padding: 20px;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container-fluid" style="overflow-y:scroll;">
+<h1 class="text-center alert alert-danger">Views</h1>
+        <div class="row">
+            <div class="col-sm-2"></div>
+
+            <!-- content goes here -->
+            <div class="col-sm-8">
+                <div><h2 class="text-center">Views</h2></div>
+<div style="height: 20px;"></div>
+<div>
+  <h3 class="text-center"> <button class="btn btn-primary float-center padded" style="margin-right: 50px;" onclick="window.location.href='{{url_for('customer_credit_check')}}';">Customer Credit Check</button>
+      <button class="btn btn-primary float-center padded" onclick="window.location.href='{{url_for('role_distribution')}}';">Role Distribution</button></h3>
+</div>
+
+<div style="height: 20px;"></div>
+<div>
+  <h3 class="text-center"> <button class="btn btn-primary float-center padded" style="margin-right: 50px;" onclick="window.location.href='{{url_for('drone_traffic_control')}}';">Drone Traffic Control</button>
+      <button class="btn btn-primary float-center padded" onclick="window.location.href='{{url_for('most_popular_products')}}';">Most Popular Products</button></h3>
+</div>
+
+<div style="height: 20px;"></div>
+<div>
+  <h3 class="text-center"> <button class="btn btn-primary float-center padded" style="margin-right: 50px;" onclick="window.location.href='{{url_for('drone_pilot_roster')}}';">Drone Pilot Roster</button>
+      <button class="btn btn-primary float-center padded" onclick="window.location.href='{{url_for('store_sales_overview')}}';">Store Sales Overview</button></h3>
+</div>
+<div style="height: 20px;"></div>
+<div>
+  <h3 class="text-center"> <button class="btn btn-primary float-center padded" onclick="window.location.href='{{url_for('orders_in_progress')}}';">Orders In Progress</button></h3>
+</div>
+ <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>

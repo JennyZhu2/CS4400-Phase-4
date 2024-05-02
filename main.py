@@ -9,6 +9,7 @@ connection = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
     passwd="1236",
+    passwd="1051",
     database="drone_dispatch",
     port = 3306
 )
@@ -23,7 +24,6 @@ connection.commit()
 # cursor.execute("DESCRIBE users")
 # cursor.callproc('remove_customer', ("vding123"))
 # cursor.execute("SELECT * FROM customers")
-
 
 # for x in cursor:
 #      print(x)
@@ -270,7 +270,7 @@ def swapDrone():
 
 @app.route('/view')
 def view():
-    return 'Views will be displayed here'
+    return render_template("views.html")
 
 @app.route("/customer_credit_check")
 def customer_credit_check():
