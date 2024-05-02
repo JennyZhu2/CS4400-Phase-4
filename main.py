@@ -8,6 +8,7 @@ app.config['SECRET_KEY'] = 'akfbibibibfkwiw'
 connection = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
+    passwd="1051",
     database="drone_dispatch",
     port = 3306
 )
@@ -269,7 +270,92 @@ def swapDrone():
 
 @app.route('/view')
 def view():
-    return 'Views will be displayed here'
+    return render_template("views.html")
+
+@app.route("/customer_credit_check")
+def customer_credit_check():
+    cursor = connection.cursor()
+    try:
+        query = """
+            SELECT uname AS Customer_Name, rating, credit,
+            IFNULL((SELECT SUM(price * quantity) FROM orders JOIN order_lines ON orders.orderID = order_lines.orderID WHERE purchased_by = customers.uname), 0) AS credit_already_allocated
+            FROM customers
+            GROUP BY uname;
+        """
+        cursor.execute(query)
+        value = cursor.fetchall()
+    finally:
+        cursor.close()
+    return render_template("customer_credit_check.html", data=value, name='Customer Credit Check')
+
+@app.route("/role_distribution")
+def role_distribution():
+    cursor = connection.cursor()
+    try:
+        query = """
+            SELECT 'Users' AS Category, COUNT(*) AS Total FROM users
+            UNION ALL
+            SELECT 'Customers', COUNT(*) FROM customers
+            UNION ALL
+            SELECT 'Employees', COUNT(*) FROM employees
+            UNION ALL
+            SELECT 'Customer-Employer Overlap', COUNT(*) FROM customers NATURAL JOIN employees
+            UNION ALL
+            SELECT 'Drone Pilots', COUNT(*) FROM drone_pilots
+            UNION ALL
+            SELECT 'Store Workers', COUNT(*) FROM store_workers
+            UNION ALL
+            SELECT 'Other Employee Roles', COUNT(*) FROM employees WHERE uname NOT IN (SELECT uname FROM drone_pilots) AND uname NOT IN (SELECT uname FROM store_workers)
+        """
+        cursor.execute(query)
+        value = cursor.fetchall()
+    finally:
+        cursor.close()
+    return render_template("role_distribution.html", data=value, name='Role Distribution')
+
+@app.route("/drone_traffic_control")
+def drone_traffic_control():
+    cursor = connection.cursor()
+    query = "SELECT drone_serves_store, drone_tag, pilot, total_weight_allowed, current_weight, deliveries_allowed, deliveries_in_progress FROM drone_traffic_control;"
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template("drone_traffic_control.html", data=data, name='Drone Traffic Control')
+
+@app.route("/most_popular_products")
+def most_popular_products():
+    cursor.execute("select products.barcode, pname, weight, min(price), max(price), ifnull(min(quantity),0), ifnull(max(quantity),0), ifnull(sum(quantity),0) from products left join order_lines on products.barcode=order_lines.barcode group by products.barcode;")
+    value = cursor.fetchall()
+    return render_template("most_popular_products.html", data = value, name = 'most_popular_products')
+
+@app.route("/drone_pilot_roster")
+def drone_pilot_roster():
+    cursor.execute("select uname, licenseID, storeID, droneTag, experience, count(orderID) from drone_pilots left join drones on uname=pilot left join orders on droneTag=carrier_tag and storeID=carrier_store group by uname,storeID,droneTag;")
+    value = cursor.fetchall()
+    return render_template("drone_pilot_roster.html", data = value, name = 'drone_pilot_roster')
+
+@app.route("/store_sales_overview")
+def store_sales_overview():
+    cursor.execute("select storeID, sname, manager, revenue, ifnull(sum(price * quantity),0), ifnull(count(distinct orders.orderID), 0) from stores left join orders on storeID=carrier_store left join order_lines on orders.orderID=order_lines.orderID group by storeID;")
+    value = cursor.fetchall()
+    return render_template("store_sales_overview.html", data = value, name = 'store_sales_overview')
+
+
+@app.route("/orders_in_progress")
+def orders_in_progress():
+    cursor = connection.cursor()
+    cursor.execute("""
+        SELECT orders.orderID, IFNULL(SUM(price * quantity), 0) AS cost, 
+        IFNULL(COUNT(barcode), 0) AS num_products, 
+        IFNULL(SUM(weight * quantity), 0) AS payload, GROUP_CONCAT(pname) AS contents
+        FROM orders 
+        LEFT JOIN order_lines ON orders.orderID = order_lines.orderID 
+        NATURAL JOIN products 
+        GROUP BY order_lines.orderID;
+    """)
+    value = cursor.fetchall()
+    cursor.close()
+    return render_template("orders_in_progress.html", data=value, name='Orders in Progress')
 
 @app.route('/order')
 def order():
