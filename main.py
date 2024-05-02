@@ -9,16 +9,15 @@ connection = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
     passwd="1236",
-    passwd="1051",
     database="drone_dispatch",
     port = 3306
 )
 
 # cursor object interacts with database
-cursor = connection.cursor()
-cursor = connection.cursor(buffered=True)
+# cursor = connection.cursor()
+# cursor = connection.cursor(buffered=True)
 #cursor.execute("INSERT INTO users (uname, first_name, last_name, address, birthdate) VALUES (%s,%s,%s,%s,%s)", ("Mary143", "Mary", "Joe", "San Diego", "1973-03-07"))
-connection.commit()
+# connection.commit()
 
 # cursor.callproc('add_customer', ("Jenn482","Jenny","ZHU","Atlanta","2004-07-10","5","10"))
 # cursor.execute("DESCRIBE users")
@@ -31,6 +30,10 @@ connection.commit()
 # @app.route('/', methods=['POST', 'GET'])
 # def home():
 #     return redirect(url_for('customer'))
+
+@app.route('/')
+def main():
+    return render_template("index.html")
 
 @app.route('/customer', methods=['POST', 'GET'])
 def addCustomer():
@@ -400,18 +403,21 @@ def drone_traffic_control():
 
 @app.route("/most_popular_products")
 def most_popular_products():
+    cursor = connection.cursor()
     cursor.execute("select products.barcode, pname, weight, min(price), max(price), ifnull(min(quantity),0), ifnull(max(quantity),0), ifnull(sum(quantity),0) from products left join order_lines on products.barcode=order_lines.barcode group by products.barcode;")
     value = cursor.fetchall()
     return render_template("most_popular_products.html", data = value, name = 'most_popular_products')
 
 @app.route("/drone_pilot_roster")
 def drone_pilot_roster():
+    cursor = connection.cursor()
     cursor.execute("select uname, licenseID, storeID, droneTag, experience, count(orderID) from drone_pilots left join drones on uname=pilot left join orders on droneTag=carrier_tag and storeID=carrier_store group by uname,storeID,droneTag;")
     value = cursor.fetchall()
     return render_template("drone_pilot_roster.html", data = value, name = 'drone_pilot_roster')
 
 @app.route("/store_sales_overview")
 def store_sales_overview():
+    cursor = connection.cursor()
     cursor.execute("select storeID, sname, manager, revenue, ifnull(sum(price * quantity),0), ifnull(count(distinct orders.orderID), 0) from stores left join orders on storeID=carrier_store left join order_lines on orders.orderID=order_lines.orderID group by storeID;")
     value = cursor.fetchall()
     return render_template("store_sales_overview.html", data = value, name = 'store_sales_overview')
@@ -432,14 +438,6 @@ def orders_in_progress():
     value = cursor.fetchall()
     cursor.close()
     return render_template("orders_in_progress.html", data=value, name='Orders in Progress')
-
-@app.route('/order')
-def order():
-    return 'Orders will be displayed here'
-
-@app.route('/')
-def main():
-    return render_template("index.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
