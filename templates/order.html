@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Dispatch - Orders</title>
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container-fluid" style="overflow-y:scroll;">
+<h1 class="text-center alert alert-danger">Orders</h1>
+        <div class="row">
+            <div class="col-sm-2"></div>
+
+            <!-- content goes here -->
+            <div class="col-sm-8">
+<h2 >Order List <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal1">Begin Order</button>
+    <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal2">Deliver Order</button>
+<button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal3">Cancel Order</button></h2>
+
+
+{%with messages = get_flashed_messages()%}
+{%if messages%}
+{% for message in messages %}
+<div class="alert alert-success alert-dismissable" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    {{message}}
+</div>
+{%endfor%}
+{%endif%}
+{%endwith%}
+
+
+
+    <!-- Enter New Customer Modal -->
+    <div id="myModal1" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Please Create a New Order</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+
+                <div class="modal-body">
+
+                    <form action="{{ url_for('beginOrder')}}" method="POST">
+                        <div class="form-group">
+                          <label>Order ID</label>
+                            <input type="text" name="orderid" class="form-control" id="orderid" placeholder="pub_307">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Sold On</label>
+                            <input type="text" name="soldon" class="form-control" id="soldon" placeholder="2024-03-03">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Purchased By</label>
+                            <input type="text" name="purchasedby" class="form-control" id="purchasedby" placeholder="awilson5">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Carrier Store</label>
+                            <select name="store" id="store" class="form-control" placeholder="pub">
+                                {% for s in ["krg", "pub"] %}
+                                <option value="{{ s }}">{{ s }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Carrier Tag</label>
+                            <input type="text" name="tag" class="form-control" id="tag" placeholder="1">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Product Barcode</label>
+                            <input type="text" name="barcode" class="form-control" id="barcode" placeholder="ap_9T25E36L">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Product Price</label>
+                            <input type="text" name="price" class="form-control" id="price" placeholder="10">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Product Quantity</label>
+                            <input type="text" name="quantity" class="form-control" id="quantity" placeholder="2">
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <a href="{{ url_for('beginOrder') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+
+                      </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- End of Remove Customer Modal -->
+
+
+
+<table class="table table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Order ID</th>
+            <th scope="col">Sold On</th>
+            <th scope="col">Purchased By</th>
+            <th scope="col">Carrier Store</th>
+            <th scope="col">Carrier Tag</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in order %}
+        <tr>
+        <td>{{row.0}}</td>
+        <td>{{row.1}}</td>
+        <td>{{row.2}}</td>
+        <td>{{row.3}}</td>
+        <td>{{row.4}}</td>
+        <td>
+        </td>
+    </tr>
+
+
+     <!-- Enter New Student Modal -->
+     <div id="myModal2" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Please Select an Order to Deliver</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+
+                <div class="modal-body">
+
+                    <form action="{{ url_for('deliverOrder')}}" method="POST">
+                        <div class="form-group">
+                          <label>Order ID</label>
+                            <select name="orderid" id="orderid_d" class="form-control" placeholder="pub_307">
+                                {% for o in order %}
+                                <option value="{{ o[0] }}">{{ o[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Deliver</button>
+                            <a href="{{ url_for('deliverOrder') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+
+                      </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+         <!-- Enter New Student Modal -->
+     <div id="myModal3" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Please Select an Order to Cancel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+
+                <div class="modal-body">
+
+                    <form action="{{ url_for('cancelOrder')}}" method="POST">
+                        <div class="form-group">
+                          <label>Order ID</label>
+                            <select name="orderid" id="orderid_c" class="form-control" placeholder="pub_307">
+                                {% for o in order %}
+                                <option value="{{ o[0] }}">{{ o[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger">Cancel</button>
+                            <a href="{{ url_for('cancelOrder') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+
+                      </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- End of Edit Student Modal -->
+
+         <!-- Enter New Student Modal -->
+     <div id="myModal4" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Please Add a New Order Line</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+
+                <div class="modal-body">
+
+                    <form action="{{ url_for('addOrderLine')}}" method="POST">
+                        <div class="form-group">
+                          <label>Order ID</label>
+                            <select name="orderid" id="orderid_a" class="form-control" placeholder="pub_307">
+                                {% for o in order %}
+                                <option value="{{ o[0] }}">{{ o[0] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Product Barcode</label>
+                            <input type="text" name="barcode" class="form-control" id="barcode_a" placeholder="ap_9T25E36L">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Product Price</label>
+                            <input type="text" name="price" class="form-control" id="price_a" placeholder="10">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Product Quantity</label>
+                            <input type="text" name="quantity" class="form-control" id="quantity_a" placeholder="2">
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <a href="{{ url_for('addOrderLine') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+
+                      </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+        {% endfor %}
+    </tbody>
+    <div class="msg">{{ msg }}</div>
+</table>
+
+<h2 >Order Line List <button class="btn btn-primary float-right" data-toggle="modal" data-target="#myModal4">Add Order Line</button></h2>
+
+<table class="table table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Order ID</th>
+            <th scope="col">Barcode</th>
+            <th scope="col">Price</th>
+            <th scope="col">Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in order_line %}
+        <tr>
+        <td>{{row.0}}</td>
+        <td>{{row.1}}</td>
+        <td>{{row.2}}</td>
+        <td>{{row.3}}</td>
+        <td>
+        </td>
+    </tr>
+            {% endfor %}
+    </tbody>
+    <div class="msg">{{ msg }}</div>
+</table>
+            </div>
+            <!-- Content ends here-->
+
+
+            <div class="col-sm-2"></div>
+
+        </div>
+    </div>
+
+ <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>

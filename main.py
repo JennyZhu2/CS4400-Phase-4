@@ -268,6 +268,104 @@ def swapDrone():
     cursor.close()
     return render_template('drone.html', drone=drone, drone_pilots=drone_pilots)
 
+@app.route('/order', methods=['POST', 'GET'])
+def beginOrder():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM orders")
+    order = cursor.fetchall()
+    cursor.execute("SELECT * FROM order_lines")
+    order_line = cursor.fetchall()
+    if request.method == "POST":
+        # fetch data from form inputs
+        orderid = request.form['orderid']
+        soldon = request.form['soldon']
+        purchasedby = request.form['purchasedby']
+        store = request.form['store']
+        tag = request.form['tag']
+        barcode = request.form['barcode']
+        price = request.form['price']
+        quantity = request.form['quantity']
+        try:
+            # call mysql stored procedure and commit changes
+            cursor.callproc('begin_order', (orderid, soldon, purchasedby, store, tag, barcode, price, quantity))
+            connection.commit()
+            cursor.close()
+            return redirect('/order')
+        except Exception as e:
+            flash(f'Cannot add order: {e}')
+    cursor.close()
+    # populate webpage with queried entries
+    return render_template('order.html', order=order, order_line=order_line)
+
+@app.route('/order', methods=['POST', 'GET'])
+def addOrderLine():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM orders")
+    order = cursor.fetchall()
+    cursor.execute("SELECT * FROM order_lines")
+    order_line = cursor.fetchall()
+    if request.method == "POST":
+        # fetch data from form inputs
+        orderid = request.form['orderid']
+        barcode = request.form['barcode']
+        price = request.form['price']
+        quantity = request.form['quantity']
+        try:
+            # call mysql stored procedure and commit changes
+            cursor.callproc('add_order_line', (orderid, barcode, price, quantity))
+            connection.commit()
+            cursor.close()
+            return redirect('/order')
+        except Exception as e:
+            flash(f'Cannot add order line: {e}')
+    cursor.close()
+    # populate webpage with queried entries
+    return render_template('order.html', order=order, order_line=order_line)
+
+@app.route('/order', methods=['POST', 'GET'])
+def deliverOrder():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM orders")
+    order = cursor.fetchall()
+    cursor.execute("SELECT * FROM order_lines")
+    order_line = cursor.fetchall()
+    if request.method == "POST":
+        # fetch data from form inputs
+        orderid = request.form['orderid']
+        try:
+            # call mysql stored procedure and commit changes
+            cursor.callproc('deliver_order', (orderid))
+            connection.commit()
+            cursor.close()
+            return redirect('/order')
+        except Exception as e:
+            flash(f'Cannot deliver order: {e}')
+    cursor.close()
+    # populate webpage with queried entries
+    return render_template('order.html', order=order, order_line=order_line)
+
+@app.route('/order', methods=['POST', 'GET'])
+def cancelOrder():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM orders")
+    order = cursor.fetchall()
+    cursor.execute("SELECT * FROM order_lines")
+    order_line = cursor.fetchall()
+    if request.method == "POST":
+        # fetch data from form inputs
+        orderid = request.form['orderid']
+        try:
+            # call mysql stored procedure and commit changes
+            cursor.callproc('cancel_order', (orderid))
+            connection.commit()
+            cursor.close()
+            return redirect('/order')
+        except Exception as e:
+            flash(f'Cannot cancel order: {e}')
+    cursor.close()
+    # populate webpage with queried entries
+    return render_template('order.html', order=order, order_line=order_line)
+
 @app.route('/view')
 def view():
     return render_template("views.html")
