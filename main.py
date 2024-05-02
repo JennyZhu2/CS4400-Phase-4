@@ -273,22 +273,53 @@ def view():
 
 @app.route("/customer_credit_check")
 def customer_credit_check():
-    cursor.execute("select uname, rating, credit,ifnull(sum(price * quantity),0) from customers left join orders on purchased_by=uname left join order_lines on orders.orderID=order_lines.orderID group by uname;")
-    value = cursor.fetchall()
-    return render_template("customer_credit_check.html", data = value, name = 'customer_credit_check')
-
+    cursor = connection.cursor()
+    try:
+        query = """
+            SELECT uname AS Customer_Name, rating, credit,
+            IFNULL((SELECT SUM(price * quantity) FROM orders JOIN order_lines ON orders.orderID = order_lines.orderID WHERE purchased_by = customers.uname), 0) AS credit_already_allocated
+            FROM customers
+            GROUP BY uname;
+        """
+        cursor.execute(query)
+        value = cursor.fetchall()
+    finally:
+        cursor.close()
+    return render_template("customer_credit_check.html", data=value, name='Customer Credit Check')
 
 @app.route("/role_distribution")
 def role_distribution():
-    cursor.execute("select 'users', count(*) from users union select 'customers', count(*) from customers union select 'employees', count(*) from employees union select 'customer_employer_overlap', count(*) from customers natural join employees union select 'drone_pilots', count(*) from drone_pilots union select 'store_workers', count(*) from store_workers union select 'other_employee_roles', count(*) from employees where uname not in (select uname from drone_pilots) and uname not in (select uname from store_workers);")
-    value = cursor.fetchall()
-    return render_template("role_distribution.html", data = value, name = 'role_distribution')
+    cursor = connection.cursor()
+    try:
+        query = """
+            SELECT 'Users' AS Category, COUNT(*) AS Total FROM users
+            UNION ALL
+            SELECT 'Customers', COUNT(*) FROM customers
+            UNION ALL
+            SELECT 'Employees', COUNT(*) FROM employees
+            UNION ALL
+            SELECT 'Customer-Employer Overlap', COUNT(*) FROM customers NATURAL JOIN employees
+            UNION ALL
+            SELECT 'Drone Pilots', COUNT(*) FROM drone_pilots
+            UNION ALL
+            SELECT 'Store Workers', COUNT(*) FROM store_workers
+            UNION ALL
+            SELECT 'Other Employee Roles', COUNT(*) FROM employees WHERE uname NOT IN (SELECT uname FROM drone_pilots) AND uname NOT IN (SELECT uname FROM store_workers)
+        """
+        cursor.execute(query)
+        value = cursor.fetchall()
+    finally:
+        cursor.close()
+    return render_template("role_distribution.html", data=value, name='Role Distribution')
 
 @app.route("/drone_traffic_control")
-def drone_traffic_control(): 
-    cursor.execute("select storeID,droneTag,pilot,capacity,ifnull(sum(weight * quantity),0),remaining_trips,count(distinct orders.orderID) from drones left join orders on droneTag=carrier_tag and storeID=carrier_store left join order_lines on orders.orderID=order_lines.orderID left join products on order_lines.barcode=products.barcode group by storeID,droneTag;") 
-    value = cursor.fetchall() 
-    return render_template("drone_traffic_control.html", data = value, name = 'drone_traffic_control')
+def drone_traffic_control():
+    cursor = connection.cursor()
+    query = "SELECT drone_serves_store, drone_tag, pilot, total_weight_allowed, current_weight, deliveries_allowed, deliveries_in_progress FROM drone_traffic_control;"
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template("drone_traffic_control.html", data=data, name='Drone Traffic Control')
 
 @app.route("/most_popular_products")
 def most_popular_products():
@@ -311,9 +342,19 @@ def store_sales_overview():
 
 @app.route("/orders_in_progress")
 def orders_in_progress():
-    cursor.execute("select orders.orderID,ifnull(sum(price * quantity),0),ifnull(count(barcode),0),ifnull(sum(weight * quantity),0),group_concat(pname) from orders left join order_lines on orders.orderID=order_lines.orderID natural join products group by order_lines.orderID;")
+    cursor = connection.cursor()
+    cursor.execute("""
+        SELECT orders.orderID, IFNULL(SUM(price * quantity), 0) AS cost, 
+        IFNULL(COUNT(barcode), 0) AS num_products, 
+        IFNULL(SUM(weight * quantity), 0) AS payload, GROUP_CONCAT(pname) AS contents
+        FROM orders 
+        LEFT JOIN order_lines ON orders.orderID = order_lines.orderID 
+        NATURAL JOIN products 
+        GROUP BY order_lines.orderID;
+    """)
     value = cursor.fetchall()
-    return render_template("orders_in_progress.html", data = value, name = 'orders_in_progress')
+    cursor.close()
+    return render_template("orders_in_progress.html", data=value, name='Orders in Progress')
 
 @app.route('/order')
 def order():
