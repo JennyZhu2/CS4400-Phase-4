@@ -291,7 +291,6 @@ def beginOrder():
             # call mysql stored procedure and commit changes
             cursor.callproc('begin_order', (orderid, soldon, purchasedby, store, tag, barcode, price, quantity))
             connection.commit()
-            flash('Order successfully started')
             cursor.close()
             return redirect('/order')
         except Exception as e:
@@ -319,7 +318,6 @@ def addOrderLine():
             # call mysql stored procedure and commit changes
             cursor.callproc('add_order_line', (orderid, barcode, price, quantity))
             connection.commit()
-            flash('Order successfully started')
             cursor.close()
             return redirect('/order')
         except Exception as e:
