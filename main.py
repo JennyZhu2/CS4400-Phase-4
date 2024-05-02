@@ -8,6 +8,7 @@ app.config['SECRET_KEY'] = 'akfbibibibfkwiw'
 connection = mysql.connector.connect(
     host="127.0.0.1",
     user="root",
+    passwd="1051",
     database="drone_dispatch",
     port = 3306
 )
@@ -269,7 +270,7 @@ def swapDrone():
 
 @app.route('/view')
 def view():
-    return 'Views will be displayed here'
+    return render_template("views.html")
 
 @app.route("/customer_credit_check")
 def customer_credit_check():
