@@ -1,0 +1,18 @@
+<h1> {{name}}</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th> Category</th>
+            <th> total </th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for row in data%}
+        <tr>
+            <td>{{row[0]}}</td>
+            <td>{{row[1]}}</td>
+        </tr>
+        {%endfor%}
+    </tbody>
+</table>

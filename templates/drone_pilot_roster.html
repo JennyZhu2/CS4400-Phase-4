@@ -1,0 +1,27 @@
+<h1> {{name}}</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th> pilot</th>
+            <th> licenseID </th>
+            <th> drone_serves_store </th>
+            <th> drone_tag </th>
+            <th> successful_deliveries </th>
+            <th> pending_deliveries </th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for row in data%}
+        <tr>
+            <td>{{row[0]}}</td>
+            <td>{{row[1]}}</td>
+            <td>{{row[2]}}</td>
+            <td>{{row[3]}}</td>
+            <td>{{row[4]}}</td>
+            <td>{{row[5]}}</td>
+
+        </tr>
+        {%endfor%}
+    </tbody>
+</table>

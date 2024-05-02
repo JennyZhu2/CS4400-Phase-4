@@ -1,0 +1,22 @@
+<h1> {{name}}</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th> Customer Name</th>
+            <th> rating </th>
+            <th> current_credit </th>
+            <th> credit_already_allocated </th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for row in data%}
+        <tr>
+            <td>{{row[0]}}</td>
+            <td>{{row[1]}}</td>
+            <td>{{row[2]}}</td>
+            <td>{{row[3]}}</td>
+        </tr>
+        {%endfor%}
+    </tbody>
+</table>
