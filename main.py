@@ -298,7 +298,7 @@ def beginOrder():
     # populate webpage with queried entries
     return render_template('order.html', order=order, order_line=order_line)
 
-@app.route('/order', methods=['POST', 'GET'])
+@app.route('/add_order_line', methods=['POST', 'GET'])
 def addOrderLine():
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM orders")
@@ -323,7 +323,7 @@ def addOrderLine():
     # populate webpage with queried entries
     return render_template('order.html', order=order, order_line=order_line)
 
-@app.route('/order', methods=['POST', 'GET'])
+@app.route('/deliver_order', methods=['POST', 'GET'])
 def deliverOrder():
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM order_lines")
@@ -346,7 +346,7 @@ def deliverOrder():
     # populate webpage with queried entries
     return render_template('order.html', order=order, order_line=order_line)
 
-@app.route('/order', methods=['POST', 'GET'])
+@app.route('/cancel_order', methods=['POST', 'GET'])
 def cancelOrder():
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM order_lines")
@@ -456,10 +456,6 @@ def orders_in_progress():
     value = cursor.fetchall()
     cursor.close()
     return render_template("orders_in_progress.html", data=value, name='Orders in Progress')
-
-@app.route('/order')
-def order():
-    return 'Orders will be displayed here'
 
 @app.route('/')
 def main():

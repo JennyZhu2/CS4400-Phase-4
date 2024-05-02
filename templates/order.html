@@ -38,80 +38,6 @@
 
 
 
-    <!-- Enter New Customer Modal -->
-    <div id="myModal1" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title text-primary" style="align-content: center;">Please Create a New Order</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-
-
-                <div class="modal-body">
-
-                    <form action="{{ url_for('beginOrder')}}" method="POST">
-                        <div class="form-group">
-                          <label>Order ID</label>
-                            <input type="text" name="orderid" class="form-control" id="orderid" placeholder="pub_307">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Sold On</label>
-                            <input type="text" name="soldon" class="form-control" id="soldon" placeholder="2024-03-03">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Purchased By</label>
-                            <input type="text" name="purchasedby" class="form-control" id="purchasedby" placeholder="awilson5">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Carrier Store</label>
-                            <select name="store" id="store" class="form-control" placeholder="pub">
-                                {% for s in ["krg", "pub"] %}
-                                <option value="{{ s }}">{{ s }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Carrier Tag</label>
-                            <input type="text" name="tag" class="form-control" id="tag" placeholder="1">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Product Barcode</label>
-                            <input type="text" name="barcode" class="form-control" id="barcode" placeholder="ap_9T25E36L">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Product Price</label>
-                            <input type="text" name="price" class="form-control" id="price" placeholder="10">
-                        </div>
-
-                        <div class="form-group">
-                            <label>Product Quantity</label>
-                            <input type="text" name="quantity" class="form-control" id="quantity" placeholder="2">
-                        </div>
-
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Save</button>
-                            <a href="{{ url_for('beginOrder') }}" class="btn btn-secondary">Cancel</a>
-                        </div>
-
-                      </form>
-
-
-                </div>
-            </div>
-        </div>
-
-    </div>
-
 
     <!-- End of Remove Customer Modal -->
 
@@ -248,6 +174,81 @@
         </div>
 
     </div>
+    <!-- Enter New Customer Modal -->
+    <div id="myModal1" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" style="align-content: center;">Please Create a New Order</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+
+                <div class="modal-body">
+
+                    <form action="{{ url_for('beginOrder')}}" method="POST">
+                        <div class="form-group">
+                          <label>Order ID</label>
+                            <input type="text" name="orderid" class="form-control" id="orderid" placeholder="pub_307">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Sold On</label>
+                            <input type="text" name="soldon" class="form-control" id="soldon" placeholder="2024-03-03">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Purchased By</label>
+                            <input type="text" name="purchasedby" class="form-control" id="purchasedby" placeholder="awilson5">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Carrier Store</label>
+                            <select name="store" id="store" class="form-control" placeholder="pub">
+                                {% for s in ["krg", "pub"] %}
+                                <option value="{{ s }}">{{ s }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Carrier Tag</label>
+                            <input type="text" name="tag" class="form-control" id="tag" placeholder="1">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Product Barcode</label>
+                            <input type="text" name="barcode" class="form-control" id="barcode" placeholder="ap_9T25E36L">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Product Price</label>
+                            <input type="text" name="price" class="form-control" id="price" placeholder="10">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Product Quantity</label>
+                            <input type="text" name="quantity" class="form-control" id="quantity" placeholder="2">
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <a href="{{ url_for('beginOrder') }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+
+                      </form>
+
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
 
 
 
