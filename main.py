@@ -268,6 +268,82 @@ def swapDrone():
     cursor.close()
     return render_template('drone.html', drone=drone, drone_pilots=drone_pilots)
 
+@app.route('/begin_order', methods=['POST', 'GET'])
+def begin_order():
+    if request.method == 'POST':
+        order_id = request.form['order_id']
+        sold_on = request.form['sold_on']
+        purchased_by = request.form['purchased_by']
+        carrier_store = request.form['carrier_store']
+        carrier_tag = request.form['carrier_tag']
+        barcode = request.form['barcode']
+        price = request.form['price']
+        quantity = request.form['quantity']
+
+        try:
+            cursor = connection.cursor()
+            cursor.callproc('begin_order', [order_id, sold_on, purchased_by, carrier_store, carrier_tag, barcode, price, quantity])
+            connection.commit()
+            flash('Order successfully started')
+        except Exception as e:
+            flash(f'Failed to start order: {e}')
+        finally:
+            cursor.close()
+        return redirect(url_for('begin_order'))
+    return render_template('begin_order.html')
+
+@app.route('/add_order_line', methods=['POST', 'GET'])
+def add_order_line():
+    if request.method == 'POST':
+        order_id = request.form['order_id']
+        barcode = request.form['barcode']
+        price = request.form['price']
+        quantity = request.form['quantity']
+
+        try:
+            cursor = connection.cursor()
+            cursor.callproc('add_order_line', [order_id, barcode, price, quantity])
+            connection.commit()
+            flash('Order line added successfully')
+        except Exception as e:
+            flash(f'Failed to add order line: {e}')
+        finally:
+            cursor.close()
+        return redirect(url_for('add_order_line'))
+    return render_template('add_order_line.html')
+
+@app.route('/deliver_order', methods=['POST'])
+def deliver_order():
+    if request.method == 'POST':
+        order_id = request.form['order_id']
+        try:
+            cursor = connection.cursor()
+            cursor.callproc('deliver_order', [order_id])
+            connection.commit()
+            flash('Order delivered successfully')
+        except Exception as e:
+            flash(f'Failed to deliver order: {e}')
+        finally:
+            cursor.close()
+        return redirect(url_for('deliver_order'))
+    return render_template('deliver_order.html')
+
+@app.route('/cancel_order', methods=['POST'])
+def cancel_order():
+    if request.method == 'POST':
+        order_id = request.form['order_id']
+        try:
+            cursor = connection.cursor()
+            cursor.callproc('cancel_order', [order_id])
+            connection.commit()
+            flash('Order cancelled successfully')
+        except Exception as e:
+            flash(f'Failed to cancel order: {e}')
+        finally:
+            cursor.close()
+        return redirect(url_for('cancel_order'))
+    return render_template('cancel_order.html')
+
 @app.route('/view')
 def view():
     return render_template("views.html")

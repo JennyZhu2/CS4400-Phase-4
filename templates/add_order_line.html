@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Order Line</title>
+</head>
+<body>
+    <h1>Add Order Line</h1>
+    <form action="{{ url_for('add_order_line') }}" method="post">
+        Order ID: <input type="text" name="order_id"><br>
+        Barcode: <input type="text" name="barcode"><br>
+        Price: <input type="number" name="price"><br>
+        Quantity: <input type="number" name="quantity"><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
