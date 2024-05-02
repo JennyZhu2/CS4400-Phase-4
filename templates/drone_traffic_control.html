@@ -1,29 +1,40 @@
-<h1> {{name}}</h1>
-
-<table>
-    <thead>
-        <tr>
-            <th> drone_serves_store</th>
-            <th> drone_tag </th>
-            <th> pilot </th>
-            <th> total_weight_allowed </th>
-            <th> current_weight </th>
-            <th> deliveries_allowed </th>
-            <th> deliveries_in_progress </th> 
-        </tr>
-    </thead>
-    <tbody>
-        {%for row in data%}
-        <tr>
-            <td>{{row[0]}}</td>
-            <td>{{row[1]}}</td>
-            <td>{{row[2]}}</td>
-            <td>{{row[3]}}</td>
-            <td>{{row[4]}}</td>
-            <td>{{row[5]}}</td>
-            <td>{{row[6]}}</td>
-
-        </tr>
-        {%endfor%}
-    </tbody>
-</table>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Traffic Control</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>{{ name }}</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Store ID</th>
+                    <th>Drone Tag</th>
+                    <th>Pilot</th>
+                    <th>Total Weight Allowed</th>
+                    <th>Current Weight</th>
+                    <th>Deliveries Allowed</th>
+                    <th>Deliveries In Progress</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                    <td>{{ row[6] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

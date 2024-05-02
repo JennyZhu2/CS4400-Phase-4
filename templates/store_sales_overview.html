@@ -1,27 +1,38 @@
-<h1> {{name}}</h1>
-
-<table>
-    <thead>
-        <tr>
-            <th> store_id</th>
-            <th> sname </th>
-            <th> manager </th>
-            <th> revenue </th>
-            <th> incoming_revenue </th>
-            <th> incoming_orders </th>
-        </tr>
-    </thead>
-    <tbody>
-        {%for row in data%}
-        <tr>
-            <td>{{row[0]}}</td>
-            <td>{{row[1]}}</td>
-            <td>{{row[2]}}</td>
-            <td>{{row[3]}}</td>
-            <td>{{row[4]}}</td>
-            <td>{{row[5]}}</td>
-
-        </tr>
-        {%endfor%}
-    </tbody>
-</table>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Sales Overview</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>{{ name }}</h1>
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Store ID</th>
+                    <th>Store Name</th>
+                    <th>Manager</th>
+                    <th>Revenue</th>
+                    <th>Incoming Revenue</th>
+                    <th>Incoming Orders</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
