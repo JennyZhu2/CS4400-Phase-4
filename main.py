@@ -268,6 +268,114 @@ def swapDrone():
     cursor.close()
     return render_template('drone.html', drone=drone, drone_pilots=drone_pilots)
 
+@app.route('/order', methods=['POST', 'GET'])
+def beginOrder():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM order_lines")
+    order_line = cursor.fetchall()
+    cursor.execute("SELECT * FROM orders")
+    order = cursor.fetchall()
+    cursor.execute("SELECT * FROM products")
+    product = cursor.fetchall()
+    if request.method == "POST":
+        # fetch data from form inputs
+        orderid = request.form['orderid']
+        soldon = request.form['soldon']
+        purchasedby = request.form['purchasedby']
+        store = request.form['store']
+        tag = request.form['tag']
+        barcode = request.form['barcode']
+        price = request.form['price']
+        quantity = request.form['quantity']
+        try:
+            # call mysql stored procedure and commit changes
+            cursor.callproc('begin_order', (orderid, soldon, purchasedby, store, tag, barcode, price, quantity))
+            connection.commit()
+            flash('Order successfully started')
+            cursor.close()
+            return redirect('/order')
+        except Exception as e:
+            flash(f'Cannot add order: {e}')
+    cursor.close()
+    # populate webpage with queried entries
+    return render_template('order.html', order=order, order_line=order_line, product=product)
+
+@app.route('/add_order_line', methods=['POST', 'GET'])
+def addOrderLine():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM orders")
+    order = cursor.fetchall()
+    cursor.execute("SELECT * FROM order_lines")
+    order_line = cursor.fetchall()
+    cursor.execute("SELECT * FROM products")
+    product = cursor.fetchall()
+    if request.method == "POST":
+        # fetch data from form inputs
+        orderid = request.form['orderid']
+        barcode = request.form['barcode']
+        price = request.form['price']
+        quantity = request.form['quantity']
+        try:
+            # call mysql stored procedure and commit changes
+            cursor.callproc('add_order_line', (orderid, barcode, price, quantity))
+            connection.commit()
+            flash('Order successfully started')
+            cursor.close()
+            return redirect('/order')
+        except Exception as e:
+            flash(f'Cannot add order line: {e}')
+    cursor.close()
+    # populate webpage with queried entries
+    return render_template('order.html', order=order, order_line=order_line, product=product)
+
+@app.route('/deliver_order', methods=['POST', 'GET'])
+def deliverOrder():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM order_lines")
+    order_line = cursor.fetchall()
+    cursor.execute("SELECT * FROM orders")
+    order = cursor.fetchall()
+    cursor.execute("SELECT * FROM products")
+    product = cursor.fetchall()
+    if request.method == "POST":
+        # fetch data from form inputs
+        orderid = request.form['orderid']
+        try:
+            # call mysql stored procedure and commit changes
+            cursor.callproc('deliver_order', (orderid,))
+            connection.commit()
+            cursor.close()
+            return redirect('/order')
+        except Exception as e:
+            flash(f'Cannot deliver order: {e}')
+    cursor.close()
+    # populate webpage with queried entries
+    return render_template('order.html', order=order, order_line=order_line, product=product)
+
+@app.route('/cancel_order', methods=['POST', 'GET'])
+def cancelOrder():
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM order_lines")
+    order_line = cursor.fetchall()
+    cursor.execute("SELECT * FROM orders")
+    order = cursor.fetchall()
+    cursor.execute("SELECT * FROM products")
+    product = cursor.fetchall()
+    if request.method == "POST":
+        # fetch data from form inputs
+        orderid = request.form['orderid']
+        try:
+            # call mysql stored procedure and commit changes
+            cursor.callproc('cancel_order', (orderid,))
+            connection.commit()
+            cursor.close()
+            return redirect('/order')
+        except Exception as e:
+            flash(f'Cannot cancel order: {e}')
+    cursor.close()
+    # populate webpage with queried entries
+    return render_template('order.html', order=order, order_line=order_line, product=product)
+
 @app.route('/view')
 def view():
     return render_template("views.html")
@@ -324,20 +432,26 @@ def drone_traffic_control():
 
 @app.route("/most_popular_products")
 def most_popular_products():
+    cursor = connection.cursor()
     cursor.execute("select products.barcode, pname, weight, min(price), max(price), ifnull(min(quantity),0), ifnull(max(quantity),0), ifnull(sum(quantity),0) from products left join order_lines on products.barcode=order_lines.barcode group by products.barcode;")
     value = cursor.fetchall()
+    cursor.close()
     return render_template("most_popular_products.html", data = value, name = 'most_popular_products')
 
 @app.route("/drone_pilot_roster")
 def drone_pilot_roster():
+    cursor = connection.cursor()
     cursor.execute("select uname, licenseID, storeID, droneTag, experience, count(orderID) from drone_pilots left join drones on uname=pilot left join orders on droneTag=carrier_tag and storeID=carrier_store group by uname,storeID,droneTag;")
     value = cursor.fetchall()
+    cursor.close()
     return render_template("drone_pilot_roster.html", data = value, name = 'drone_pilot_roster')
 
 @app.route("/store_sales_overview")
 def store_sales_overview():
+    cursor = connection.cursor()
     cursor.execute("select storeID, sname, manager, revenue, ifnull(sum(price * quantity),0), ifnull(count(distinct orders.orderID), 0) from stores left join orders on storeID=carrier_store left join order_lines on orders.orderID=order_lines.orderID group by storeID;")
     value = cursor.fetchall()
+    cursor.close()
     return render_template("store_sales_overview.html", data = value, name = 'store_sales_overview')
 
 
@@ -356,10 +470,6 @@ def orders_in_progress():
     value = cursor.fetchall()
     cursor.close()
     return render_template("orders_in_progress.html", data=value, name='Orders in Progress')
-
-@app.route('/order')
-def order():
-    return 'Orders will be displayed here'
 
 @app.route('/')
 def main():
